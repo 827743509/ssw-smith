@@ -1,7 +1,7 @@
 # Maven
 target/
 *.class
-
+settings.xml
 # Frontend
 frontend/node_modules/
 frontend/dist/

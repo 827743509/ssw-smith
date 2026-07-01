@@ -15,6 +15,7 @@ echo Build image: %IMAGE_NAME%:%IMAGE_TAG%
 docker build ^
   --build-arg HTTP_PROXY=http://host.docker.internal:9567 ^
   --build-arg HTTPS_PROXY=http://host.docker.internal:9567 ^
+  --build-arg "MAVEN_OPTS=-Dhttp.proxyHost=host.docker.internal -Dhttp.proxyPort=9567 -Dhttps.proxyHost=host.docker.internal -Dhttps.proxyPort=9567" ^
   -t %IMAGE_NAME%:%IMAGE_TAG% .
 
 if errorlevel 1 (
