@@ -1,6 +1,6 @@
 services:
   app:
-    image: ssw-smith:latest
+    image: zhou827743509/ssw-smith:latest
     container_name: ssw-smith-app
     restart: unless-stopped
     environment:
