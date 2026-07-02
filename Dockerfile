@@ -15,7 +15,7 @@ RUN mvn -B dependency:go-offline
 
 COPY src ./src
 COPY --from=frontend-build /app/frontend/dist ./src/main/resources/static
-RUN mvn -B -DskipTests package
+RUN mvn -B -DskipTests clean package spring-boot:repackage
 
 FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app

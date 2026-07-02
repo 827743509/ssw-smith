@@ -3,13 +3,13 @@ services:
     image: zhou827743509/ssw-smith:latest
     container_name: ssw-smith-app
     restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       TZ: Asia/Shanghai
       SPRING_DATASOURCE_URL: jdbc:mysql://host.docker.internal:3306/ssw_smith?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: 562424706Xiao
+      SPRING_DATASOURCE_PASSWORD: 123456
       JAVA_OPTS: -Xms256m -Xmx512m
     ports:
       - "8080:8080"
-
-
