@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, reactive, watch } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
+import { EyeOutlined } from '@ant-design/icons-vue';
 import { message } from 'ant-design-vue';
 import type { TableColumnsType } from 'ant-design-vue';
 import type { Project } from '../types/observability';
@@ -16,14 +17,33 @@ const emit = defineEmits<{
 
 const projectForm = reactive({ name: '', description: '', environment: 'dev' });
 const canSubmit = computed(() => projectForm.name.trim().length > 0 && !props.creating);
+const apiKeyModalOpen = ref(false);
+const currentApiKey = ref('');
 
 const projectColumns: TableColumnsType<Project> = [
   { title: '项目名称', dataIndex: 'name', key: 'name' },
   { title: '环境', dataIndex: 'environment', key: 'environment', width: 120 },
   { title: '描述', dataIndex: 'description', key: 'description', ellipsis: true },
-  { title: 'API Key', dataIndex: 'apiKey', key: 'apiKey', ellipsis: true },
+  { title: 'API Key', dataIndex: 'apiKey', key: 'apiKey', width: 190 },
   { title: '创建时间', dataIndex: 'createdAt', key: 'createdAt', width: 160 }
 ];
+
+function maskApiKey(apiKey?: string) {
+  if (!apiKey) {
+    return '-';
+  }
+
+  return apiKey.length > 12 ? `${apiKey.slice(0, 10)}...` : apiKey;
+}
+
+function showApiKey(apiKey?: string) {
+  if (!apiKey) {
+    return;
+  }
+
+  currentApiKey.value = apiKey;
+  apiKeyModalOpen.value = true;
+}
 
 function submitProject() {
   const name = projectForm.name.trim();
@@ -79,9 +99,23 @@ watch(
           <template v-else-if="column.key === 'createdAt'">
             {{ formatDate(record.createdAt) }}
           </template>
+          <template v-else-if="column.key === 'apiKey'">
+            <div v-if="record.apiKey" class="api-key-cell" @click.stop>
+              <span class="api-key-mask">{{ maskApiKey(record.apiKey) }}</span>
+              <a-button size="small" class="api-key-view-button" title="点击查看完整 API Key" @click="showApiKey(record.apiKey)">
+                <template #icon><EyeOutlined /></template>
+                查看
+              </a-button>
+            </div>
+            <span v-else>-</span>
+          </template>
           <template v-else>{{ text || '-' }}</template>
         </template>
       </a-table>
     </a-card>
+
+    <a-modal v-model:open="apiKeyModalOpen" title="API Key" ok-text="关闭" :cancel-button-props="{ style: { display: 'none' } }" width="520px">
+      <div class="api-key-modal-content">{{ currentApiKey }}</div>
+    </a-modal>
   </section>
 </template>

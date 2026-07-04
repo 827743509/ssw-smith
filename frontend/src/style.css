@@ -231,6 +231,36 @@ body,
   min-width: 0;
 }
 
+.api-key-cell {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 8px;
+}
+
+.api-key-mask {
+  min-width: 0;
+  overflow: hidden;
+  color: #0f172a;
+  font-family: Consolas, Monaco, monospace;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.api-key-view-button {
+  flex: 0 0 auto;
+}
+
+.api-key-modal-content {
+  padding: 12px;
+  border-radius: 6px;
+  background: #f8fafc;
+  color: #0f172a;
+  font-family: Consolas, Monaco, monospace;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
 .card-note {
   margin: 14px 0 0;
   color: #64748b;
