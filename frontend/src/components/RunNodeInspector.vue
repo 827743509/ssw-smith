@@ -103,9 +103,10 @@ const attributes = computed(() => {
     ['Status', run.status],
     ['Model', modelLabel.value || '-'],
     ['Latency', `${run.latencyMs || 0}ms`],
-    ['Prompt Tokens', run.promptTokens ?? 0],
-    ['Completion Tokens', run.completionTokens ?? 0],
+    ['Input Tokens', run.inputTokens ?? 0],
     ['Total Tokens', run.totalTokens ?? 0],
+    ['Output Tokens', run.outputTokens ?? 0],
+    ['Cache Read', run.cacheRead ?? 0],
     ['Started At', formatDate(run.startedAt)],
     ['Ended At', formatDate(run.endedAt)]
   ];

@@ -24,7 +24,10 @@ const traceCount = computed(() => numberValue(props.stats.traceCount));
 const successRate = computed(() => percent(props.stats.successCount, props.stats.traceCount));
 const errorRate = computed(() => percent(props.stats.errorCount, props.stats.traceCount));
 const avgLatencyMs = computed(() => numberValue(props.stats.avgLatencyMs));
+const inputTokens = computed(() => numberValue(props.stats.inputTokens));
 const totalTokens = computed(() => numberValue(props.stats.totalTokens));
+const outputTokens = computed(() => numberValue(props.stats.outputTokens));
+const cacheRead = computed(() => numberValue(props.stats.cacheRead));
 </script>
 
 <template>
@@ -34,7 +37,10 @@ const totalTokens = computed(() => numberValue(props.stats.totalTokens));
       <a-card><a-statistic title="成功率" :value="successRate" /></a-card>
       <a-card><a-statistic title="错误率" :value="errorRate" /></a-card>
       <a-card><a-statistic title="平均延迟 ms" :value="avgLatencyMs" /></a-card>
-      <a-card><a-statistic title="Token 总量" :value="totalTokens" /></a-card>
+      <a-card><a-statistic title="Input Token 总量" :value="inputTokens" /></a-card>
+      <a-card><a-statistic title="Total Token 总量" :value="totalTokens" /></a-card>
+      <a-card><a-statistic title="Output Token 总量" :value="outputTokens" /></a-card>
+      <a-card><a-statistic title="Cache Read Token 总量" :value="cacheRead" /></a-card>
     </div>
 
     <a-card title="Trace Count" :bordered="false">

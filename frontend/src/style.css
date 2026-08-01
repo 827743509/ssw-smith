@@ -220,15 +220,29 @@ body,
   text-align: center;
 }
 
-.analysis-grid,
-.project-page {
+.analysis-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 18px;
 }
 
+.project-page {
+  display: grid;
+  grid-template-columns: minmax(320px, 360px) minmax(0, 1fr);
+  gap: 18px;
+}
+
 .project-table-card {
   min-width: 0;
+}
+
+.project-table .ant-table-cell {
+  white-space: nowrap;
+}
+
+.project-table .ant-table-cell-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .api-key-cell {
@@ -293,9 +307,14 @@ body,
     grid-template-columns: repeat(3, minmax(160px, 1fr));
   }
 
-  .project-page,
   .analysis-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1500px) {
+  .project-page {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 .trace-detail-drawer .ant-drawer-body {

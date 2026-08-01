@@ -43,9 +43,10 @@ public class TraceServiceImpl extends ServiceImpl<TraceMapper, TraceEntity> impl
         trace.setName(request.name());
         trace.setStatus(StringUtils.hasText(request.status()) ? request.status() : "SUCCESS");
         trace.setLatencyMs(request.latencyMs());
+        trace.setInputTokens(defaultInt(request.inputTokens()));
         trace.setTotalTokens(defaultInt(request.totalTokens()));
-        trace.setPromptTokens(defaultInt(request.promptTokens()));
-        trace.setCompletionTokens(defaultInt(request.completionTokens()));
+        trace.setOutputTokens(defaultInt(request.outputTokens()));
+        trace.setCacheRead(defaultInt(request.cacheRead()));
         trace.setInput(toJson(request.input()));
         trace.setOutput(toJson(request.output()));
         trace.setMetadata(toJson(request.metadata()));
@@ -88,7 +89,10 @@ public class TraceServiceImpl extends ServiceImpl<TraceMapper, TraceEntity> impl
                 .eq(projectId != null, TraceEntity::getProjectId, projectId));
         long successCount = traces.stream().filter(trace -> "SUCCESS".equalsIgnoreCase(trace.getStatus())).count();
         long errorCount = traces.stream().filter(trace -> "ERROR".equalsIgnoreCase(trace.getStatus())).count();
+        long inputTokens = traces.stream().mapToLong(trace -> trace.getInputTokens() == null ? 0 : trace.getInputTokens()).sum();
         long totalTokens = traces.stream().mapToLong(trace -> trace.getTotalTokens() == null ? 0 : trace.getTotalTokens()).sum();
+        long outputTokens = traces.stream().mapToLong(trace -> trace.getOutputTokens() == null ? 0 : trace.getOutputTokens()).sum();
+        long cacheRead = traces.stream().mapToLong(trace -> trace.getCacheRead() == null ? 0 : trace.getCacheRead()).sum();
         BigDecimal avgLatency = traces.stream()
                 .filter(trace -> trace.getLatencyMs() != null)
                 .map(trace -> BigDecimal.valueOf(trace.getLatencyMs()))
@@ -112,7 +116,10 @@ public class TraceServiceImpl extends ServiceImpl<TraceMapper, TraceEntity> impl
             avgScore = avgScore.divide(BigDecimal.valueOf(scoreCount), 2, RoundingMode.HALF_UP);
         }
 
-        return new DashboardStats(traces.size(), successCount, errorCount, totalTokens, avgLatency, avgScore);
+        return new DashboardStats(
+                traces.size(), successCount, errorCount,
+                inputTokens, totalTokens, outputTokens, cacheRead,
+                avgLatency, avgScore);
     }
 
     private Integer defaultInt(Integer value) {

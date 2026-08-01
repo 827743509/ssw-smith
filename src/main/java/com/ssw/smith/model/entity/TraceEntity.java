@@ -17,9 +17,10 @@ public class TraceEntity {
     private String name;
     private String status;
     private Long latencyMs;
+    private Integer inputTokens;
     private Integer totalTokens;
-    private Integer promptTokens;
-    private Integer completionTokens;
+    private Integer outputTokens;
+    private Integer cacheRead;
     private String input;
     private String output;
     private String metadata;

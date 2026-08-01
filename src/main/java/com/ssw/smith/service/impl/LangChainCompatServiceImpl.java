@@ -95,9 +95,10 @@ public class LangChainCompatServiceImpl implements LangChainCompatService {
                 normalizeStatus(firstText(body, "status"), firstText(body, "error"), boolValue(body, "dotted_order")),
                 modelName(body),
                 durationMs(parseTime(firstText(body, "start_time", "startedAt")), parseTime(firstText(body, "end_time", "endedAt"))),
-                intValue(body, "prompt_tokens", "promptTokens", "extra.usage_metadata.input_tokens"),
-                intValue(body, "completion_tokens", "completionTokens", "extra.usage_metadata.output_tokens"),
-                intValue(body, "total_tokens", "totalTokens", "extra.usage_metadata.total_tokens"),
+                inputTokens(body),
+                totalTokens(body),
+                outputTokens(body),
+                cacheRead(body),
                 firstNode(body, "inputs", "input"),
                 firstNode(body, "outputs", "output"),
                 metadata(body),
@@ -115,9 +116,10 @@ public class LangChainCompatServiceImpl implements LangChainCompatService {
                 runId,
                 normalizeStatus(firstText(body, "status"), firstText(body, "error"), null),
                 durationMs(parseTime(firstText(body, "start_time", "startedAt")), parseTime(firstText(body, "end_time", "endedAt"))),
-                intValue(body, "prompt_tokens", "promptTokens", "extra.usage_metadata.input_tokens"),
-                intValue(body, "completion_tokens", "completionTokens", "extra.usage_metadata.output_tokens"),
-                intValue(body, "total_tokens", "totalTokens", "extra.usage_metadata.total_tokens"),
+                inputTokens(body),
+                totalTokens(body),
+                outputTokens(body),
+                cacheRead(body),
                 firstNode(body, "outputs", "output"),
                 metadata(body),
                 firstText(body, "error", "errorMessage"),
@@ -428,9 +430,10 @@ public class LangChainCompatServiceImpl implements LangChainCompatService {
                 textOrDefault(firstText(body, "name"), "langchain-trace"),
                 normalizeStatus(firstText(body, "status"), firstText(body, "error"), null),
                 durationMs(parseTime(firstText(body, "start_time", "startedAt")), parseTime(firstText(body, "end_time", "endedAt"))),
-                intValue(body, "total_tokens", "totalTokens", "extra.usage_metadata.total_tokens"),
-                intValue(body, "prompt_tokens", "promptTokens", "extra.usage_metadata.input_tokens"),
-                intValue(body, "completion_tokens", "completionTokens", "extra.usage_metadata.output_tokens"),
+                inputTokens(body),
+                totalTokens(body),
+                outputTokens(body),
+                cacheRead(body),
                 firstNode(body, "inputs", "input"),
                 firstNode(body, "outputs", "output"),
                 metadata(body),
@@ -468,9 +471,10 @@ public class LangChainCompatServiceImpl implements LangChainCompatService {
         }
         trace.setStatus(run.getStatus());
         trace.setLatencyMs(run.getLatencyMs());
-        trace.setPromptTokens(run.getPromptTokens());
-        trace.setCompletionTokens(run.getCompletionTokens());
+        trace.setInputTokens(run.getInputTokens());
         trace.setTotalTokens(run.getTotalTokens());
+        trace.setOutputTokens(run.getOutputTokens());
+        trace.setCacheRead(run.getCacheRead());
         trace.setOutput(run.getOutput());
         trace.setErrorMessage(run.getErrorMessage());
         trace.setEndedAt(parseTime(firstText(body, "end_time", "endedAt")));
@@ -546,9 +550,61 @@ public class LangChainCompatServiceImpl implements LangChainCompatService {
         return StringUtils.hasText(value) ? value : defaultValue;
     }
 
-    private Integer intValue(JsonNode node, String... paths) {
-        JsonNode value = firstNode(node, paths);
-        return value == null || !value.canConvertToInt() ? 0 : value.asInt();
+    private Integer inputTokens(JsonNode body) {
+        return usageTokenValue(body,
+                new String[]{"input_tokens", "inputTokens"},
+                "input_tokens", "inputTokens", "prompt_tokens", "promptTokens");
+    }
+
+    private Integer totalTokens(JsonNode body) {
+        return usageTokenValue(body,
+                new String[]{"total_tokens", "totalTokens"},
+                "total_tokens", "totalTokens");
+    }
+
+    private Integer outputTokens(JsonNode body) {
+        return usageTokenValue(body,
+                new String[]{"output_tokens", "outputTokens"},
+                "output_tokens", "outputTokens", "completion_tokens", "completionTokens");
+    }
+
+    private Integer cacheRead(JsonNode body) {
+        return usageTokenValue(body,
+                new String[]{"input_token_details.cache_read", "inputTokenDetails.cacheRead"},
+                "cache_read", "cacheRead");
+    }
+
+    private Integer usageTokenValue(JsonNode body, String[] usagePaths, String... directPaths) {
+        JsonNode directValue = firstNode(body, directPaths);
+        if (directValue != null && directValue.canConvertToInt()) {
+            return directValue.asInt();
+        }
+
+        JsonNode usageMetadata = findUsageMetadata(body);
+        JsonNode usageValue = firstNode(usageMetadata, usagePaths);
+        return usageValue == null || !usageValue.canConvertToInt() ? 0 : usageValue.asInt();
+    }
+
+    private JsonNode findUsageMetadata(JsonNode node) {
+        if (node == null || node.isNull() || node.isValueNode()) {
+            return null;
+        }
+        if (node.isObject()) {
+            JsonNode usageMetadata = node.get("usage_metadata");
+            if (usageMetadata == null) {
+                usageMetadata = node.get("usageMetadata");
+            }
+            if (usageMetadata != null && usageMetadata.isObject()) {
+                return usageMetadata;
+            }
+        }
+        for (JsonNode child : node) {
+            JsonNode usageMetadata = findUsageMetadata(child);
+            if (usageMetadata != null) {
+                return usageMetadata;
+            }
+        }
+        return null;
     }
 
     private Long longValue(JsonNode node, String... paths) {

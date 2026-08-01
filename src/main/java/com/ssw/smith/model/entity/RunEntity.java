@@ -20,9 +20,10 @@ public class RunEntity {
     private String status;
     private String modelName;
     private Long latencyMs;
-    private Integer promptTokens;
-    private Integer completionTokens;
+    private Integer inputTokens;
     private Integer totalTokens;
+    private Integer outputTokens;
+    private Integer cacheRead;
     private String input;
     private String output;
     private String metadata;

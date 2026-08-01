@@ -5,7 +5,10 @@ export function createEmptyStats(): DashboardStats {
     traceCount: 0,
     successCount: 0,
     errorCount: 0,
+    inputTokens: 0,
     totalTokens: 0,
+    outputTokens: 0,
+    cacheRead: 0,
     avgLatencyMs: 0,
     avgFeedbackScore: 0
   };

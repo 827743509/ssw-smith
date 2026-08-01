@@ -21,11 +21,11 @@ const apiKeyModalOpen = ref(false);
 const currentApiKey = ref('');
 
 const projectColumns: TableColumnsType<Project> = [
-  { title: '项目名称', dataIndex: 'name', key: 'name' },
-  { title: '环境', dataIndex: 'environment', key: 'environment', width: 120 },
-  { title: '描述', dataIndex: 'description', key: 'description', ellipsis: true },
-  { title: 'API Key', dataIndex: 'apiKey', key: 'apiKey', width: 190 },
-  { title: '创建时间', dataIndex: 'createdAt', key: 'createdAt', width: 160 }
+  { title: '项目名称', dataIndex: 'name', key: 'name', width: 180, ellipsis: true },
+  { title: '环境', dataIndex: 'environment', key: 'environment', width: 90 },
+  { title: '描述', dataIndex: 'description', key: 'description', width: 200, ellipsis: true },
+  { title: 'API Key', dataIndex: 'apiKey', key: 'apiKey', width: 220 },
+  { title: '创建时间', dataIndex: 'createdAt', key: 'createdAt', width: 170 }
 ];
 
 function maskApiKey(apiKey?: string) {
@@ -91,7 +91,14 @@ watch(
     </a-card>
 
     <a-card title="项目列表" :bordered="false" class="project-table-card">
-      <a-table :columns="projectColumns" :data-source="projects" row-key="id" :pagination="{ pageSize: 8 }">
+      <a-table
+        class="project-table"
+        :columns="projectColumns"
+        :data-source="projects"
+        :scroll="{ x: 860 }"
+        row-key="id"
+        :pagination="{ pageSize: 8 }"
+      >
         <template #bodyCell="{ column, record, text }">
           <template v-if="column.key === 'environment'">
             <a-tag color="blue">{{ record.environment || 'dev' }}</a-tag>

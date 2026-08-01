@@ -53,7 +53,10 @@ function selectRun(run: Run) {
           </div>
           <a-space>
             <a-statistic title="Latency" :value="detail.trace.latencyMs || 0" suffix="ms" />
-            <a-statistic title="Tokens" :value="detail.trace.totalTokens || 0" />
+            <a-statistic title="Input Tokens" :value="detail.trace.inputTokens || 0" />
+            <a-statistic title="Total Tokens" :value="detail.trace.totalTokens || 0" />
+            <a-statistic title="Output Tokens" :value="detail.trace.outputTokens || 0" />
+            <a-statistic title="Cache Read Tokens" :value="detail.trace.cacheRead || 0" />
             <a-statistic title="Started" :value="formatDate(detail.trace.startedAt)" />
           </a-space>
         </header>

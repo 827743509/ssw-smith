@@ -21,9 +21,10 @@ CREATE TABLE IF NOT EXISTS obs_trace (
     name VARCHAR(256) NOT NULL,
     status VARCHAR(32) NOT NULL DEFAULT 'SUCCESS',
     latency_ms BIGINT NULL,
+    input_tokens INT NOT NULL DEFAULT 0,
     total_tokens INT NOT NULL DEFAULT 0,
-    prompt_tokens INT NOT NULL DEFAULT 0,
-    completion_tokens INT NOT NULL DEFAULT 0,
+    output_tokens INT NOT NULL DEFAULT 0,
+    cache_read INT NOT NULL DEFAULT 0,
     input JSON NULL,
     output JSON NULL,
     metadata JSON NULL,
@@ -34,8 +35,7 @@ CREATE TABLE IF NOT EXISTS obs_trace (
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     UNIQUE KEY uk_obs_trace_key (trace_key),
     KEY idx_obs_trace_project_started (project_id, started_at),
-    KEY idx_obs_trace_status (status),
-    CONSTRAINT fk_obs_trace_project FOREIGN KEY (project_id) REFERENCES obs_project (id)
+    KEY idx_obs_trace_status (status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS obs_run (
@@ -48,9 +48,10 @@ CREATE TABLE IF NOT EXISTS obs_run (
     status VARCHAR(32) NOT NULL DEFAULT 'SUCCESS',
     model_name VARCHAR(128) NULL,
     latency_ms BIGINT NULL,
-    prompt_tokens INT NOT NULL DEFAULT 0,
-    completion_tokens INT NOT NULL DEFAULT 0,
+    input_tokens INT NOT NULL DEFAULT 0,
     total_tokens INT NOT NULL DEFAULT 0,
+    output_tokens INT NOT NULL DEFAULT 0,
+    cache_read INT NOT NULL DEFAULT 0,
     input JSON NULL,
     output JSON NULL,
     metadata JSON NULL,
@@ -61,8 +62,7 @@ CREATE TABLE IF NOT EXISTS obs_run (
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     UNIQUE KEY uk_obs_run_key (run_key),
     KEY idx_obs_run_trace_started (trace_id, started_at),
-    KEY idx_obs_run_parent (parent_run_id),
-    CONSTRAINT fk_obs_run_trace FOREIGN KEY (trace_id) REFERENCES obs_trace (id)
+    KEY idx_obs_run_parent (parent_run_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS obs_feedback (
@@ -76,7 +76,5 @@ CREATE TABLE IF NOT EXISTS obs_feedback (
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     KEY idx_obs_feedback_trace (trace_id),
-    KEY idx_obs_feedback_run (run_id),
-    CONSTRAINT fk_obs_feedback_trace FOREIGN KEY (trace_id) REFERENCES obs_trace (id),
-    CONSTRAINT fk_obs_feedback_run FOREIGN KEY (run_id) REFERENCES obs_run (id)
+    KEY idx_obs_feedback_run (run_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

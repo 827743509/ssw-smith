@@ -28,9 +28,10 @@ export interface Trace {
   name: string;
   status: 'SUCCESS' | 'ERROR' | 'RUNNING' | string;
   latencyMs?: number;
+  inputTokens?: number;
   totalTokens?: number;
-  promptTokens?: number;
-  completionTokens?: number;
+  outputTokens?: number;
+  cacheRead?: number;
   input?: string;
   output?: string;
   metadata?: string;
@@ -49,9 +50,10 @@ export interface Run {
   status: string;
   modelName?: string;
   latencyMs?: number;
-  promptTokens?: number;
-  completionTokens?: number;
+  inputTokens?: number;
   totalTokens?: number;
+  outputTokens?: number;
+  cacheRead?: number;
   input?: string;
   output?: string;
   metadata?: string;
@@ -75,7 +77,10 @@ export interface DashboardStats {
   traceCount: number;
   successCount: number;
   errorCount: number;
+  inputTokens: number;
   totalTokens: number;
+  outputTokens: number;
+  cacheRead: number;
   avgLatencyMs: number;
   avgFeedbackScore: number;
 }

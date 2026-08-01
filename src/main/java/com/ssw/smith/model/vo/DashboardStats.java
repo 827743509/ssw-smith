@@ -6,7 +6,10 @@ public record DashboardStats(
         long traceCount,
         long successCount,
         long errorCount,
+        long inputTokens,
         long totalTokens,
+        long outputTokens,
+        long cacheRead,
         BigDecimal avgLatencyMs,
         BigDecimal avgFeedbackScore
 ) {

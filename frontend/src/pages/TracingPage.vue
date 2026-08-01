@@ -20,7 +20,10 @@ const traceColumns: TableColumnsType<Trace> = [
   { title: '名称', dataIndex: 'name', key: 'name', ellipsis: true },
   { title: '输入', dataIndex: 'input', key: 'input', ellipsis: true },
   { title: '延迟', dataIndex: 'latencyMs', key: 'latencyMs', width: 110 },
-  { title: 'Tokens', dataIndex: 'totalTokens', key: 'totalTokens', width: 110 },
+  { title: 'Input Tokens', dataIndex: 'inputTokens', key: 'inputTokens', width: 120 },
+  { title: 'Total Tokens', dataIndex: 'totalTokens', key: 'totalTokens', width: 120 },
+  { title: 'Output Tokens', dataIndex: 'outputTokens', key: 'outputTokens', width: 125 },
+  { title: 'Cache Read Tokens', dataIndex: 'cacheRead', key: 'cacheRead', width: 145 },
   { title: '开始时间', dataIndex: 'startedAt', key: 'startedAt', width: 160 }
 ];
 
@@ -64,8 +67,17 @@ function traceRowProps(record: Trace) {
           <template v-else-if="column.key === 'latencyMs'">
             {{ record.latencyMs || 0 }}ms
           </template>
+          <template v-else-if="column.key === 'inputTokens'">
+            {{ record.inputTokens || 0 }}
+          </template>
           <template v-else-if="column.key === 'totalTokens'">
             {{ record.totalTokens || 0 }}
+          </template>
+          <template v-else-if="column.key === 'outputTokens'">
+            {{ record.outputTokens || 0 }}
+          </template>
+          <template v-else-if="column.key === 'cacheRead'">
+            {{ record.cacheRead || 0 }}
           </template>
           <template v-else-if="column.key === 'startedAt'">
             {{ formatDate(record.startedAt) }}

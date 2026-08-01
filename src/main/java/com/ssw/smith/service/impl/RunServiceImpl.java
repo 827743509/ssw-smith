@@ -37,9 +37,10 @@ public class RunServiceImpl extends ServiceImpl<RunMapper, RunEntity> implements
         RunEntity run = findRun(request);
         LocalDateTime endedAt = request.endedAt() == null ? LocalDateTime.now() : request.endedAt();
         run.setStatus(StringUtils.hasText(request.status()) ? request.status() : "SUCCESS");
-        run.setPromptTokens(request.promptTokens() == null ? run.getPromptTokens() : request.promptTokens());
-        run.setCompletionTokens(request.completionTokens() == null ? run.getCompletionTokens() : request.completionTokens());
+        run.setInputTokens(request.inputTokens() == null ? run.getInputTokens() : request.inputTokens());
         run.setTotalTokens(request.totalTokens() == null ? run.getTotalTokens() : request.totalTokens());
+        run.setOutputTokens(request.outputTokens() == null ? run.getOutputTokens() : request.outputTokens());
+        run.setCacheRead(request.cacheRead() == null ? run.getCacheRead() : request.cacheRead());
         run.setOutput(request.output() == null ? run.getOutput() : toJson(request.output()));
         run.setMetadata(request.metadata() == null ? run.getMetadata() : toJson(request.metadata()));
         run.setErrorMessage(request.errorMessage());
@@ -59,9 +60,10 @@ public class RunServiceImpl extends ServiceImpl<RunMapper, RunEntity> implements
         run.setStatus(status);
         run.setModelName(request.modelName());
         run.setLatencyMs(request.latencyMs());
-        run.setPromptTokens(defaultInt(request.promptTokens()));
-        run.setCompletionTokens(defaultInt(request.completionTokens()));
+        run.setInputTokens(defaultInt(request.inputTokens()));
         run.setTotalTokens(defaultInt(request.totalTokens()));
+        run.setOutputTokens(defaultInt(request.outputTokens()));
+        run.setCacheRead(defaultInt(request.cacheRead()));
         run.setInput(toJson(request.input()));
         run.setOutput(toJson(request.output()));
         run.setMetadata(toJson(request.metadata()));
