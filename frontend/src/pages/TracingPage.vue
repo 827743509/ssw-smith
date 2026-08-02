@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { TableColumnsType } from 'ant-design-vue';
+import { ref } from 'vue';
 import type { Project, Trace } from '../types/observability';
 import { formatDate, shortText, statusColor } from '../utils/observability';
 
@@ -15,6 +16,9 @@ const emit = defineEmits<{
   openTrace: [trace: Trace];
 }>();
 
+const errorModalOpen = ref(false);
+const selectedErrorMessage = ref('');
+
 const traceColumns: TableColumnsType<Trace> = [
   { title: '状态', dataIndex: 'status', key: 'status', width: 110 },
   { title: '名称', dataIndex: 'name', key: 'name', ellipsis: true },
@@ -24,11 +28,17 @@ const traceColumns: TableColumnsType<Trace> = [
   { title: 'Total Tokens', dataIndex: 'totalTokens', key: 'totalTokens', width: 120 },
   { title: 'Output Tokens', dataIndex: 'outputTokens', key: 'outputTokens', width: 125 },
   { title: 'Cache Read Tokens', dataIndex: 'cacheRead', key: 'cacheRead', width: 145 },
+  { title: '错误信息', dataIndex: 'errorMessage', key: 'errorMessage', width: 240, ellipsis: true },
   { title: '开始时间', dataIndex: 'startedAt', key: 'startedAt', width: 160 }
 ];
 
 function traceRowProps(record: Trace) {
   return { onClick: () => emit('openTrace', record) };
+}
+
+function showErrorMessage(errorMessage: string) {
+  selectedErrorMessage.value = errorMessage;
+  errorModalOpen.value = true;
 }
 </script>
 
@@ -79,6 +89,17 @@ function traceRowProps(record: Trace) {
           <template v-else-if="column.key === 'cacheRead'">
             {{ record.cacheRead || 0 }}
           </template>
+          <template v-else-if="column.key === 'errorMessage'">
+            <button
+              v-if="record.errorMessage"
+              class="error-message-link"
+              type="button"
+              @click.stop="showErrorMessage(record.errorMessage)"
+            >
+              {{ record.errorMessage }}
+            </button>
+            <span v-else>-</span>
+          </template>
           <template v-else-if="column.key === 'startedAt'">
             {{ formatDate(record.startedAt) }}
           </template>
@@ -86,5 +107,45 @@ function traceRowProps(record: Trace) {
         </template>
       </a-table>
     </a-card>
+
+    <a-modal v-model:open="errorModalOpen" title="错误详情" :footer="null" width="760px">
+      <a-typography-paragraph class="error-detail" :copyable="{ text: selectedErrorMessage }">
+        {{ selectedErrorMessage }}
+      </a-typography-paragraph>
+    </a-modal>
   </section>
 </template>
+
+<style scoped>
+.error-message-link {
+  display: block;
+  width: 100%;
+  padding: 0;
+  overflow: hidden;
+  color: #ff4d4f;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+}
+
+.error-message-link:hover {
+  color: #cf1322;
+  text-decoration: underline;
+}
+
+.error-detail {
+  max-height: 60vh;
+  padding: 16px;
+  margin-bottom: 0;
+  overflow: auto;
+  color: #cf1322;
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: #fff2f0;
+  border: 1px solid #ffccc7;
+  border-radius: 6px;
+}
+</style>
