@@ -21,8 +21,8 @@ const selectedErrorMessage = ref('');
 
 const traceColumns: TableColumnsType<Trace> = [
   { title: '状态', dataIndex: 'status', key: 'status', width: 110 },
-  { title: '名称', dataIndex: 'name', key: 'name', ellipsis: true },
-  { title: '输入', dataIndex: 'input', key: 'input', ellipsis: true },
+  { title: '名称', dataIndex: 'name', key: 'name', width: 180, ellipsis: true },
+  { title: '输入', dataIndex: 'input', key: 'input', width: 260, ellipsis: true },
   { title: '延迟', dataIndex: 'latencyMs', key: 'latencyMs', width: 110 },
   { title: 'Input Tokens', dataIndex: 'inputTokens', key: 'inputTokens', width: 120 },
   { title: 'Total Tokens', dataIndex: 'totalTokens', key: 'totalTokens', width: 120 },
@@ -63,6 +63,7 @@ function showErrorMessage(errorMessage: string) {
         :data-source="traces"
         :loading="loading"
         :pagination="{ pageSize: 12 }"
+        :scroll="{ x: 1570 }"
         row-key="id"
         size="middle"
         :custom-row="traceRowProps"
